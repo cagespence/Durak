@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Roboto&display=swap');
 html {
-  background-color: rgb(248, 125, 25);
   font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+}
+
+button, input {
+  font-family : inherit;
+  font-size: 1em;
 }

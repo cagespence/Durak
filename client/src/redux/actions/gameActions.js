@@ -1,0 +1,91 @@
+import { gameConstants } from '../constants/gameConstants'
+
+import getClient from './shared'
+
+const client = getClient();
+
+export const gameActions = {
+  startGame,
+  attack,
+  defend,
+  pickUp,
+  updateGameState,
+}
+
+function startGame (roomId) {
+
+  return dispatch => {
+    dispatch(request(roomId))
+    client.startGame(roomId, (error, gameState) => {
+      if (error) {
+        dispatch(failure(error))
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+      }
+    })
+  }
+  function request(roomId)    { return {type: gameConstants.START_GAME_REQUEST, roomId}}
+  function success(gameState) { return {type: gameConstants.START_GAME_SUCCESS, gameState}}
+  function failure(error)     { return {type: gameConstants.START_GAME_FAILURE, error}}
+}
+
+function attack (card, roomId) {
+  return dispatch => {
+    console.log('attacking', card, roomId);
+    dispatch(request(card, roomId))
+    client.attack(card, roomId, (error, gameState) => {
+      console.log('client callback');
+      if (error) {
+        dispatch(failure(error))
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+      }
+    })
+  }
+  function request(card, roomId) { return {type: gameConstants.ATTACK_REQUEST, request: {card, roomId}}}
+  function success(gameState)    { return {type: gameConstants.ATTACK_SUCCESS, gameState}}
+  function failure(error)        { return {type: gameConstants.ATTACK_FAILURE, error}}
+} 
+
+function defend (attacking, defending, clientId) {
+  return dispatch => {
+    dispatch(request(attacking, defending, clientId))
+    client.defend(attacking, defending, clientId, (error, gameState) => {
+      if (error) {
+        dispatch(failure(error))
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+      }
+    })
+  }
+  function request(attacking, defending, clientId)  { return {type: gameConstants.DEFEND_REQUEST, attacking, defending, clientId}}
+  function success(gameState)       { return {type: gameConstants.DEFEND_SUCCESS, gameState}}
+  function failure(error)           { return {type: gameConstants.DEFEND_FAILURE, error}}
+}
+
+function pickUp (cards, clientId) {
+  return dispatch => {
+    dispatch(request(cards, clientId))
+    client.pickUp(cards, clientId, (error, gameState) => {
+      if (error) {
+        dispatch(failure(error))
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+      }
+    })
+  }
+  function request(cards, clientId) { return {type: gameConstants.PICKUP_REQUEST, request: {cards, clientId}}}
+  function success(gameState)       { return {type: gameConstants.PICKUP_SUCCESS, gameState}}
+  function failure(error)           { return {type: gameConstants.PICKUP_FAILURE, error}}
+}
+
+function updateGameState (gameState) {
+  return dispatch => {
+    dispatch(update(gameState))
+  }
+  function update(gameState)  { return {type: gameConstants.UPDATE_GAMESTATE, gameState}}
+}

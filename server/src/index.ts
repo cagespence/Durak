@@ -45,8 +45,8 @@ const {
 } = gameManager();
 
 // Server entry point
-server.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+server.listen(process.env.PORT || 3000, () => {
+  console.log(`server running on port ${process.env.PORT}`);
 });
 
 io.on('connection', (client: any) => {

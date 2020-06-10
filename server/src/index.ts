@@ -13,7 +13,7 @@ import {RoomCreatedCallback, RoomJoinedCallback, GetRoomsCallback} from './rooms
 import {GameStateCallback, Card} from './models/gameStateTypes';
 
 // Configuration for server
-const {PORT} = require('./config/serverConfig');
+// const {PORT} = require('./config/serverConfig');
 
 // handlers and functions for clients
 const clientManager = require('./clients/clientManager');

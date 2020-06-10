@@ -11,12 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/node": "^13.13.12",
     "array.prototype.flatmap": "^1.2.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "http": "0.0.1-security",
     "socket.io": "^2.3.0",
     "ts-node": "^8.10.2",
-    "@types/node": "^13.13.12",
     "typescript": "^3.8.3"
   },
   "devDependencies": {

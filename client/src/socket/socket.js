@@ -4,12 +4,11 @@ import { roomConstants } from '../redux/constants/roomConstants';
 const io = require('socket.io-client');
 
 const address = 'durak-backend.herokuapp.com'
-const port = '20778'
 
 /**
  * Manually setting up the IP with the ip of the server ( locally for dev environment )
  */
-const socket = io(`http://${address}:${port}`);
+const socket = io(`https://${address}`);
 
 export default function () {
 

@@ -8,7 +8,7 @@ const address = 'durak-backend.herokuapp.com'
 /**
  * Manually setting up the IP with the ip of the server ( locally for dev environment )
  */
-const socket = io(`https://${address}`);
+const socket = io(`https://${address}`); 
 
 export default function () {
 

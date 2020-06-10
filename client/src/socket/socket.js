@@ -3,7 +3,7 @@ import { store } from '../redux/store'
 import { roomConstants } from '../redux/constants/roomConstants';
 const io = require('socket.io-client');
 
-const address = 'https://durak-backend.herokuapp.com'
+const address = 'durak-backend.herokuapp.com'
 const port = '20778'
 
 /**

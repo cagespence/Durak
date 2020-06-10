@@ -1,57 +1,89 @@
 import { gameConstants } from '../redux/constants/gameConstants'
 import { store } from '../redux/store'
+import { roomConstants } from '../redux/constants/roomConstants';
 const io = require('socket.io-client');
-const socket = io( 'http://192.168.2.42:3000' );
 
-export default function(){
+const address = '192.168.2.193'
+const port = '3000'
 
+/**
+ * Manually setting up the IP with the ip of the server ( locally for dev environment )
+ */
+const socket = io(`http://${address}:${port}`);
+
+export default function () {
+
+  // Emit gamestate to a list of clients
   socket.on('gamestate', (clients, gameState) => {
-    if (clients.some((client)=>{
-       return client.clientId === socket.id
-    }))
-    store.dispatch({type: gameConstants.UPDATE_GAMESTATE, gameState});
+    console.log('emitting gameState to clients')
+    if (clients.some((client) => {
+      return client.clientId === socket.id
+    })) {
+      store.dispatch({ type: gameConstants.UPDATE_GAMESTATE, gameState });
+    }
   })
 
-    function register( name, callback ){
-        socket.emit('register', name, callback)
+  // Emit player list to a list of clients
+  // Keeps player list up-to-date in a game lobby
+  socket.on('player-list', (clients) => {
+    console.log('player-list', clients)
+    if (clients.some((client) => {
+      return client.clientId === socket.id
+    })) {
+      store.dispatch({ type: roomConstants.PLAYER_LIST, players: clients });
     }
+  })
 
-    function joinRoom( roomId, callback ){
-        socket.emit('join-room', roomId, callback);
-    }
+  function register(name, callback) {
+    socket.emit('register', name, callback)
+  }
 
-    function exitRoom ( roomId ){
-        socket.emit('leave-room', roomId)
-    }
+  function joinRoom(roomId, callback) {
+    socket.emit('join-room', roomId, callback);
+  }
 
-    function createRoom ( roomId, callback ) {
-        socket.emit('create-room', roomId, callback);
-    }
+  function exitRoom(roomId) {
+    socket.emit('leave-room', roomId)
+  }
 
-    function getRooms ( callback ) {
-      socket.emit('get-rooms', callback)
-    }
+  function createRoom(roomId, callback) {
+    socket.emit('create-room', roomId, callback);
+  }
 
-    function attack( card, roomId, callback) {
-      socket.emit('attack', card, roomId, callback)
-    }
+  function nextRound(roomId, callback) {
+    socket.emit('next-round', roomId, callback);
+  }
 
-    function defend( attacking, defending, roomId, callback ) {
-      socket.emit('defend', attacking, defending, roomId, callback)
-    }
+  function pickUp(roomId, callback) {
+    socket.emit('pickup', roomId, callback);
+  }
 
-    function startGame( roomId, callback ){
-      socket.emit('start-game', roomId, callback)
-    }
+  function getRooms(callback) {
+    socket.emit('get-rooms', callback)
+  }
 
-    return {
-        register,
-        createRoom,
-        getRooms,
-        joinRoom,
-        exitRoom,
-        startGame,
-        attack,
-        defend,
-    }
+  function attack(card, roomId, callback) {
+    socket.emit('attack', card, roomId, callback)
+  }
+
+  function defend(attacking, defending, roomId, callback) {
+    socket.emit('defend', attacking, defending, roomId, callback)
+  }
+
+  function startGame(roomId, callback) {
+    socket.emit('start-game', roomId, callback)
+  }
+
+  return {
+    register,
+    createRoom,
+    getRooms,
+    joinRoom,
+    exitRoom,
+    startGame,
+    attack,
+    defend,
+    nextRound,
+    pickUp
+  }
 }

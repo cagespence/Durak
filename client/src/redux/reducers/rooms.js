@@ -4,8 +4,6 @@ const initialState = {
 }
 
 export function rooms (state = initialState, action) {
-  console.log('room reducer ' + action.type)
-  console.log("action ",action)
   switch (action.type) {
     case roomConstants.GET_ROOMS_REQUEST:
       return {
@@ -26,7 +24,9 @@ export function rooms (state = initialState, action) {
       }
     case roomConstants.ADD_ROOM_SUCCESS:
       return {
-        ...state, inRoom: action.inRoom
+        ...state,
+        inRoom: action.inRoom,
+        isHost: true
       }
     case roomConstants.ADD_ROOM_FAILURE:
       return {
@@ -53,6 +53,11 @@ export function rooms (state = initialState, action) {
     case roomConstants.LEAVE_ROOM_FAILURE:
       return {
         ...state, error: action.error
+      }
+    case roomConstants.PLAYER_LIST:
+      return {
+        ...state,
+        players: action.players
       }
     default:
       return state

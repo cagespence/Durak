@@ -9,11 +9,11 @@ export const gameActions = {
   attack,
   defend,
   pickUp,
+  nextRound,
   updateGameState,
 }
 
 function startGame (roomId) {
-
   return dispatch => {
     dispatch(request(roomId))
     client.startGame(roomId, (error, gameState) => {
@@ -28,6 +28,23 @@ function startGame (roomId) {
   function request(roomId)    { return {type: gameConstants.START_GAME_REQUEST, roomId}}
   function success(gameState) { return {type: gameConstants.START_GAME_SUCCESS, gameState}}
   function failure(error)     { return {type: gameConstants.START_GAME_FAILURE, error}}
+}
+
+function nextRound (roomId) {
+  return dispatch => {
+    dispatch(request(roomId))
+    client.nextRound(roomId, (error, gameState) => {
+      if (error) {
+        dispatch(failure(error))
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+      }
+    })
+  }
+  function request(roomId)    { return {type: gameConstants.NEXT_ROUND_REQUEST, roomId}}
+  function success(gameState) { return {type: gameConstants.NEXT_ROUND_SUCCESS, gameState}}
+  function failure(error)     { return {type: gameConstants.NEXT_ROUND_FAILURE, error}}
 }
 
 function attack (card, roomId) {
@@ -66,10 +83,10 @@ function defend (attacking, defending, clientId) {
   function failure(error)           { return {type: gameConstants.DEFEND_FAILURE, error}}
 }
 
-function pickUp (cards, clientId) {
+function pickUp (roomId) {
   return dispatch => {
-    dispatch(request(cards, clientId))
-    client.pickUp(cards, clientId, (error, gameState) => {
+    dispatch(request(roomId))
+    client.pickUp(roomId, (error, gameState) => {
       if (error) {
         dispatch(failure(error))
       }
@@ -78,7 +95,7 @@ function pickUp (cards, clientId) {
       }
     })
   }
-  function request(cards, clientId) { return {type: gameConstants.PICKUP_REQUEST, request: {cards, clientId}}}
+  function request(roomId) { return {type: gameConstants.PICKUP_REQUEST, roomId}}
   function success(gameState)       { return {type: gameConstants.PICKUP_SUCCESS, gameState}}
   function failure(error)           { return {type: gameConstants.PICKUP_FAILURE, error}}
 }

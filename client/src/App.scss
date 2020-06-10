@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+:root {
+  --color-dark: #640d14;
+  --color-light: #f4d06f;
+  --color-primary: #7e92f1;
+  --color-secondary:#ad2831;
+  --color-white: #fff8f0;
+  --card-width: 28vw;
+  --sizing-outside: 10vw;
+  --sizing-inside: 80vw;
+}
+
+// @media screen and (min-width: 520px) {
+//   :root {
+//     --card-width: 20vw;
+//   }
+// }
+
+// @media screen and (min-width: 920px) {
+//   :root {
+//     --card-width: 15vw;
+//   }
+// }
+
+// @media screen and (min-width: 1050px) {
+//   :root {
+//     --card-width: 11.5vw;
+//   }
+// }
+
+html {
+  font-family: 'Din', sans-serif;
+  // font-weight: 700;
+  font-size: 1em;
+  background-color: var(--color-secondary);
+  height: 100%;
+  scrollbar-width: none;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+body {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.App {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+button, input {
+  font-family : inherit;
+  font-size: 1em;
+}
+
+.hand {
+  /* background-color: aquamarine; */
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  min-width: 40vw;
+}
+
+.card {
+  // height: calc(var(--card-width) * 1.633);
+  margin-bottom: 1em;
+  /* display: flex;
+  flex-grow: 1;
+  width: 0; */
+}
+
+.zone {
+  box-sizing: border-box;
+  border-radius: .5em;
+  border: .3em dashed var(--color-primary);
+  animation: example 1s ease-in 0s;
+  width: var(--card-width);
+  height: calc(var(--card-width) * 1.5);
+  transition: all 500ms;
+  margin-right: 5vw;
+}
+
+ /* The animation code */
+@keyframes example {
+  from {
+    display: none;
+    filter: opacity(0);
+  }
+  to {
+    display: block;
+    filter: opacity(100%);
+  }
+}
+
+.card img {
+  width: var(--card-width);
+  height: auto;
+  box-sizing: content-box;
+  margin-right: 1em;
+}
+
+div[data-rbd-droppable-id = "hand"] {
+  overflow-x: auto;
+  /* height: calc((var(--card-width) * 1.633) + 3vh); */
+  padding-left: 1em;
+  scrollbar-width: none;
+  /* margin-top: 1em; */
+}
+
+div[data-rbd-droppable-id = "play-zone"] {
+  /* overflow-x: auto; */
+  z-index: 1000;  
+  /* width: auto; */
+  /* margin-bottom: 1em; */
+  scrollbar-width: none;
+}::webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.message {
+  /* background-color: var(--color-dark); */
+  color: var(--color-white);
+  text-align: center;
+  /* font-family: 'Helvetica'; */
+  font-size: 1.2em;
+  /* text-transform: uppercase; */
+  padding: 1em 0;
+  margin-bottom: 1em;
+  /* position: absolute;
+  left: 0; */
+  /* margin-left: -1em; */
+  width: 100vw;
+}
+
+/* .card + div[data-rbd-droppable-id = "play-zone"] {
+  margin-left: -15vw;
+} */
+
+.played-cards {
+  display: flex;
+  box-sizing: border-box;
+  /* margin-left: 5vw; */
+  padding-left: 1em;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* margin-bottom: 1em; */
+  flex: 1;
+  /* position: relative; */
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.played-cards :nth-child(2n) {
+  /* margin-left: calc(var(--card-width) / -1);   */
+  margin-left: calc(var(--card-width) * -1);
+  padding-left: 0;
+  filter: opacity(90%);
+  margin-top: 1em;
+  margin-bottom: 0;
+}
+
+.title {
+  padding-top: .15em;
+  text-align: center;
+  // font-family: 'Becker';
+  font-family: 'Bely';
+  /* font-size: 7vw; */
+  background-color: var(--color-white);
+  color: var(--color-dark);
+  font-size: 3em;
+  /* display: none; */
+}
+
+/* @media (max-width: 800px) {
+  .title {
+  }
+} */
+
+.button {
+  transition: all 250ms;
+  width: var(--sizing-inside);
+  margin: .5em var(--sizing-outside);
+  border-radius: .5em;
+  padding: .2em 0;
+  background-color: var(--color-white);
+  // border: .15em solid var(--color-dark);
+  border: 0;
+  color: var(--color-dark);
+  box-shadow: 0 0 0 var(--color-dark);
+  font-size: 2em;
+  font-family: 'Bely';
+  // font-family: 'Becker';
+
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+
+.button:hover {
+  box-shadow: 0 .2em 0 var(--color-dark);
+  // background-color: var(--color-primary);
+  filter: brightness(.9);
+  // width: calc(var(--sizing-inside) * 1.2);
+  // margin: .5em calc(var(--sizing-outside) * .2);
+}
+
+.button:active {
+  box-shadow: 0 0 0 var(--color-dark);
+  /* background-color: var(--color-white); */
+  width: var(--sizing-inside);
+  margin: .5em var(--sizing-outside);
+}
+
+
+input[type='text']::placeholder {
+  color: var(--color-white);
+}
+
+input[type='text'] {
+  width: 100%;
+  height: 4em;
+  color: var(--color-light);
+  border: none;
+  text-transform: uppercase;
+  text-align: center;
+  // font-family: 'Helvetica';
+  // font-weight: 900;
+  background-color: var(--color-dark);
+  font-size: 2em;
+  margin-top: .5em;
+}
+
+input[type='text'] + .button {
+  margin-top: -1em;
+}
+
+.user-chip {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  text-align: center;
+  padding: .3em;
+  font-size: 1.8em;
+  border-radius: 0 0 .5em .5em;
+  text-transform: uppercase;
+  width: 80vw;
+  box-sizing: border-box;
+  margin: 0 10vw 0 10vw;
+  // font-family: 'Helvetica';
+  margin-bottom: .5em;
+}
+
+.opponent-chip {
+  background-color: var(--color-dark);
+  color: var(--color-primary);
+  text-align: center;
+  vertical-align: bottom;
+  padding: .3em;
+  font-size: 1.8em;
+  border-radius: .5em;
+  text-transform: uppercase;
+  width: 80vw;
+  box-sizing: border-box;
+  margin: 0 10vw 0 10vw;
+  // font-family: 'Helvetica';
+  margin-bottom: .5em;
+}
+
+.middle {
+  margin-top: 2em;
+}
+
+.room-code {
+  // font-family: 'Helvetica';
+  font-size: 2em;
+  color: var(--color-light);
+  letter-spacing: .5em;
+  text-align: center;
+  text-transform: uppercase;
+  // margin-top: .5em;
+  margin-bottom: 1em;
+}
+
+.trump {
+  filter: invert(100%)
+}
+
+.trump-chip {
+  position: absolute;
+  visibility: hidden;
+  top: -20vh;
+  left: 0;
+  z-index: -1000;
+  width: 100vw;
+  height: 100vh;
+  /* filter: invert(100%) opacity(50%); */
+  overflow: hidden;
+}
+
+.gone {
+  display: none;
+}
+
+.pick-up {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  border: 0;
+  box-shadow: none;
+  margin: .5em 0;
+  width: 100vw;
+  border-radius: 0;
+}
+
+.next-round {
+ border: 0;
+ box-shadow: none;
+ margin: .5em 0;
+ width: 100vw;
+ border-radius: 0;
+}
+
+.filled {
+  background-color: var(--color-primary);
+}

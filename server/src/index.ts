@@ -40,6 +40,8 @@ const {
   startGame,
   attack,
   defend,
+  nextRound,
+  pickUp
 } = gameManager();
 
 // Server entry point
@@ -53,14 +55,18 @@ io.on('connection', (client: any) => {
 
   // handle registering user with username
   client.on('register', (name: string, callback: ClientRegisteredCallback) => {
-    handleRegister(client, name, callback);
+    handleRegister(client, name.toLowerCase(), callback);
   });
 
   // handle user joining a room
   client.on('join-room',
       (roomId: string, callback: RoomJoinedCallback) => {
         getClientById(client.id).then((_client: Client) => {
-          handleJoinRoom(_client, roomId, callback);
+          handleJoinRoom(_client, roomId.toLowerCase(), callback).then(clients => {
+            if (clients) {
+              io.emit('player-list', clients);
+            }
+          });
         });
       }
   );
@@ -69,7 +75,7 @@ io.on('connection', (client: any) => {
   client.on('create-room',
       (roomId: string, callback: RoomCreatedCallback) => {
         getClientById(client.id).then((_client: Client) => {
-          handleCreateRoom(_client, roomId, callback);
+          handleCreateRoom(_client, roomId.toLowerCase(), callback);
         });
       });
 
@@ -82,13 +88,19 @@ io.on('connection', (client: any) => {
     getRooms(callback);
   });
 
+  // get list of clients in a room
+  client.on('get-clients', (roomId: string, callback: GetRoomsCallback) => {
+    const clients = getClientsInRoom(roomId);
+    callback(clients);
+  });
+
   // Handle game starting
   client.on('start-game', (
       roomId: string,
       callback: GameStateCallback
   ) => {
     const clients = getClientsInRoom(roomId);
-    const gameState = startGame(roomId, clients, callback);
+    const gameState = startGame(roomId.toLowerCase(), clients, callback);
     if (gameState) {
       io.emit('gamestate', clients, gameState);
     }
@@ -107,6 +119,28 @@ io.on('connection', (client: any) => {
     }
   }
   );
+
+  client.on('next-round', (
+    roomId: string,
+  ) => {
+    const gameState = nextRound(roomId);
+    const clients = getClientsInRoom(roomId);
+    if (gameState) {
+      console.log('emitting gamestate for next round')
+      io.emit('gamestate', clients, gameState);
+    }
+  });
+
+  client.on('pickup', (
+    roomId: string,
+  ) => { 
+    const gameState = pickUp(roomId);
+    const clients = getClientsInRoom(roomId);
+    if (gameState) {
+      console.log('emitting gamestate for pickup')
+      io.emit('gamestate', clients, gameState);
+    }
+  });
 
   client.on('defend', (
       attacking: Card,

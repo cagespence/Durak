@@ -25,9 +25,8 @@ const RegisterForm = () => {
   } 
 
   return (
-    <form onSubmit={handleRegister}>
-      <p className='login-message'>login to play</p>
-      <div>
+    <form autoComplete='off' onSubmit={handleRegister}>
+      <div className='middle'>
         <div>
           <div>
             <input 
@@ -38,9 +37,7 @@ const RegisterForm = () => {
               name='userName' 
               type='text'
             />
-          </div>
-          <div>
-            <button>
+            <button className = 'button'>
               Join
             </button>
           </div>

@@ -67,30 +67,37 @@ module.exports = function () {
      * @param {string} roomId room client wants to join
      * @param {function(err, res)} callback to return data to clietn
      */
-  const handleJoinRoom = (
+  const handleJoinRoom = async (
     client: Client,
     roomId: string,
     callback: RoomJoinedCallback) => {
-    if (validRoom(client, undefined, callback)) {
-      if (rooms.get(roomId)) {
-        joinRoom(client, roomId, callback);
+    return new Promise((resolve) => {
+      if (validRoom(client, undefined, callback)) {
+        if (rooms.get(roomId)) {
+          joinRoom(client, roomId, callback).then(clients => {
+            resolve(clients)
+          })
+        } else {
+          callback('Room doesn\'t exist');
+        }
       } else {
-        callback('Room doesn\'t exist');
+        callback('Room is not valid');
       }
-    } else {
-      callback('Room is not valid');
-    }
+    })
   };
 
   // Add client to room and send back the roomId that they joined
-  const joinRoom = (
+  const joinRoom = async (
     client: Client,
     roomId: string,
     callback: RoomJoinedCallback) => {
-    addClientToRoom(client, roomId);
-    callback(null, roomId);
+    return new Promise((resolve) => {
+      addClientToRoom(client, roomId);
+      callback(null, roomId);
+      resolve(getClientsInRoom(roomId))
+    }
     // console.log(`${client.userName} joined ${roomId}`)
-  };
+  )};
 
   // add a client to a room
   const addClientToRoom = (client: Client, roomId: string): void => {

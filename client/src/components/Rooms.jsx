@@ -7,12 +7,8 @@ export const JoinRoom = (props) => {
   
   const dispatch = useDispatch()
 
-  const [createRoomId, setCreateRoomId] = useState('')
   const [joinRoomId, setJoinRoomId] = useState('')
 
-  const handleEnterCreateRoomId = (event) => {
-    setCreateRoomId(event.target.value)
-  }
 
   const handleEnterJoinRoomId = (event) => {
     setJoinRoomId(event.target.value)
@@ -20,8 +16,8 @@ export const JoinRoom = (props) => {
 
   const handleCreateRoom = (event) => {
     event.preventDefault()
-    dispatch(roomActions.addRoom(createRoomId))
-    setCreateRoomId('')
+    const roomID = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 4);
+    dispatch(roomActions.addRoom(roomID))
   }
 
   const handleJoinRoom = (event) => {
@@ -32,27 +28,14 @@ export const JoinRoom = (props) => {
 
   return (
     <div>
-      {props.error}
-      <form onSubmit={handleCreateRoom}>
-        <div>
-          <div>
-            <input 
-            onChange={handleEnterCreateRoomId}
-            value={createRoomId}
-            placeholder="Room name"
-            id='createRoom'
-            name='createRoom'
-            type="text"
-            />
-          </div>
-          <div>
-          <button >
-            Create
-          </button>
+      {props.error &&
+        <div className='message'>
+          {props.error}
         </div>
-        </div>
-      </form>
-
+      }
+      <button onClick={handleCreateRoom} className='button'>
+        new game
+      </button>
       <form onSubmit={handleJoinRoom}>
         <div>
           <div>
@@ -62,12 +45,10 @@ export const JoinRoom = (props) => {
             value={joinRoomId}
             placeholder="Room code"
             />
-          </div>
-          <div>
-          <button>
+            <button className='button'>
             Join
           </button>
-        </div>
+          </div>
         </div>
       </form>
     </div>

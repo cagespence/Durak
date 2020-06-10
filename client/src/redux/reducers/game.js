@@ -19,6 +19,20 @@ export function game(state = initialState, action) {
         ...state, 
         error: action.error
       }
+    case gameConstants.NEXT_ROUND_REQUEST:
+      return {
+        ...state
+      }
+    case gameConstants.NEXT_ROUND_SUCCESS:
+      return {
+        ...state,
+        // gameState: action.gameState
+      }
+    case gameConstants.NEXT_ROUND_FAILURE:
+      return {
+        ...state, 
+        error: action.error
+      }
     case gameConstants.ATTACK_REQUEST:
       return {
         ...state,
@@ -27,7 +41,6 @@ export function game(state = initialState, action) {
     case gameConstants.ATTACK_SUCCESS:
       return {
         ...state,
-        gameState: action.gameState
       }
     case gameConstants.ATTACK_FAILURE:
       return {
@@ -41,7 +54,7 @@ export function game(state = initialState, action) {
       }
     case gameConstants.DEFEND_SUCCESS:
       return {
-        gameState: action.gameState
+        ...state
       }
     case gameConstants.DEFEND_FAILURE:
       return {
@@ -49,6 +62,7 @@ export function game(state = initialState, action) {
         error: action.error
       } 
     case gameConstants.UPDATE_GAMESTATE:
+      console.log(action.gameState)
       return {
         gameState: action.gameState
       }

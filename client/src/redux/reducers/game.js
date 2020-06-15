@@ -1,4 +1,5 @@
 import { gameConstants } from '../constants/gameConstants'
+import { userConstants } from '../constants/userConstants'
 
 const initialState = {
 }
@@ -62,9 +63,13 @@ export function game(state = initialState, action) {
         error: action.error
       } 
     case gameConstants.UPDATE_GAMESTATE:
-      console.log(action.gameState)
       return {
         gameState: action.gameState
+      }
+    case userConstants.RECONNECT_INFO: 
+      if (action.appState.gameState)
+      return {
+        gameState: action.appState.gameState
       }
     default:
       return state;

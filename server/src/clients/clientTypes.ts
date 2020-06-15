@@ -1,7 +1,7 @@
 export interface Client {
     clientId: string,
     userName: string,
-    address: string
+    // address: string
 }
 
 export interface ClientRegisteredCallback {

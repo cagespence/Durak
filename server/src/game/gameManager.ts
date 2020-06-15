@@ -268,6 +268,10 @@ module.exports = function () {
     return games.has(roomId);
   };
 
+  const getGame = (roomId: string) => {
+      if (gameExists(roomId)) return games.get(roomId)
+  }
+
   /**
    * Returns the highest card, taking into account the trump suit
    * if the cards are not compatable, returns undefined
@@ -297,5 +301,6 @@ module.exports = function () {
     nextRound,
     defend,
     pickUp,
+    getGame,
   };
 };

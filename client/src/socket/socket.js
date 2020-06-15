@@ -1,36 +1,52 @@
 import { gameConstants } from '../redux/constants/gameConstants'
 import { store } from '../redux/store'
 import { roomConstants } from '../redux/constants/roomConstants';
+import { userConstants } from '../redux/constants/userConstants';
 const io = require('socket.io-client');
 
-const address = 'durak-backend.herokuapp.com'
+// const address = 'durak-backend.herokuapp.com'
+const address = '192.168.2.79:3000'
 
 /**
  * Manually setting up the IP with the ip of the server ( locally for dev environment )
  */
-const socket = io(`https://${address}`); 
+const socket = io(`http://${address}`); 
 
 export default function () {
 
-  // Emit gamestate to a list of clients
-  socket.on('gamestate', (clients, gameState) => {
-    console.log('emitting gameState to clients')
-    if (clients.some((client) => {
-      return client.clientId === socket.id
-    })) {
-      store.dispatch({ type: gameConstants.UPDATE_GAMESTATE, gameState });
+  socket.on('connect', () => {
+    const reconnectId = window.sessionStorage.getItem('clientId');
+    console.log('reconnectid', reconnectId)
+
+    if (reconnectId === null) {
+      window.sessionStorage.setItem('clientId', socket.id)
+    } else {
+      console.log('emitting reconnect')
+      socket.emit('reconn', reconnectId)
     }
+  })
+
+  socket.on('reconnect-info', (appState) => {
+    console.log('reconnect info')
+    store.dispatch({ type: userConstants.RECONNECT_INFO, appState });
+    // store.dispatch({ type: roomConstants.RECONNECT_INFO, inRoom: appState.inRoom });
+    // store.dispatch({ type: gameConstants.UPDATE_GAMESTATE, gameState: appState.gameState });
+  })
+
+  // Emit gamestate to a list of clients
+  socket.on('gamestate', (gameState) => {
+      store.dispatch({ type: gameConstants.UPDATE_GAMESTATE, gameState });
   })
 
   // Emit player list to a list of clients
   // Keeps player list up-to-date in a game lobby
   socket.on('player-list', (clients) => {
-    console.log('player-list', clients)
-    if (clients.some((client) => {
-      return client.clientId === socket.id
-    })) {
-      store.dispatch({ type: roomConstants.PLAYER_LIST, players: clients });
-    }
+    // console.log('player-list', clients)
+    // if (clients.some((client) => {
+    //   return (client.clientId === socket.id || client.clientId === reconnectId)
+    // })) {
+    // }
+    store.dispatch({ type: roomConstants.PLAYER_LIST, players: clients });
   })
 
   function register(name, callback) {

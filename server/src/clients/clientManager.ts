@@ -2,6 +2,7 @@ import type { Client, ClientRegisteredCallback } from './clientTypes';
 
 module.exports = function () {
   const clients = new Map();
+  const reconnectedIds = new Map();
 
   /**
      * Save connected clients in map for accessing later
@@ -16,23 +17,26 @@ module.exports = function () {
      * Remove client from map after they disconnect from server
      * @param {socket} client the client that disconnected from the server
      */
-  function removeClient(client: any): void {
-    clients.delete(client.id);
-  }
+  // function removeClient(client: any): void {
+    // clients.delete(client.id);
+    // reconnectedIds.delete(client.id)
+  // }
 
   /**
      * Save the unique username to the client
      * @param {socket} client the client to register a username to
      * @param {string} userName the unique username to register to the client
      */
-  function registerClientUserName(client: any, userName: string): void {
-    const clientId = client.id;
-    const address = client.request.connection.remoteAddress;
+  function registerClientUserName(clientId: string, userName: string): void {
     clients.set(clientId, {
-      clientId: client.id,
+      clientId,
       userName,
-      address,
     });
+  }
+
+  function handleReconnect(clientId: string, oldClientId: string) {
+      reconnectedIds.set(clientId, oldClientId)
+      return reconnectedIds.get(clientId)
   }
 
   // function emitAllClients() {
@@ -69,11 +73,11 @@ module.exports = function () {
      * @param {string} userName the username to check uniqueness
      * @return {boolean}
      */
-  function isUserNameTaken(userName: string): boolean {
-    return (Array.from(clients.values())).some(
-      (client) =>
-        client.userName === userName);
-  }
+  // function isUserNameTaken(userName: string): boolean {
+  //   return (Array.from(clients.values())).some(
+  //     (client) =>
+  //       client.userName === userName);
+  // }
 
   const getClientByUserName = (userName: string): Client => {
     const clientList = (Array.from(clients.values()));
@@ -93,29 +97,19 @@ module.exports = function () {
      * @return {ClientRegisteredCallback}
      */
   function handleRegister(
-    client: any,
+    clientId: string,
     userName: string,
     callback: ClientRegisteredCallback): ClientRegisteredCallback {
     if (!userName || userName === '' || userName.length === 0) {
       return callback('Enter a username and try logging in again');
     }
-
-    const clientId = client.id;
-    const address = client.request.connection.remoteAddress;
-    if (isUserNameTaken(userName)) {
-      const byUsername = getClientByUserName(userName);
-      if (byUsername) {
-        if (byUsername.address === address) {
-          registerClientUserName(client, userName);
-          return callback(null, { userName, clientId, address });
-        }
-      }
-      return callback('userName already taken');
+    
+    const byUsername = getClientByUserName(userName);
+    if (!byUsername) {
+        registerClientUserName(clientId, userName);
+        return callback(null, { userName, clientId });
     }
-
-    registerClientUserName(client, userName);
-
-    return callback(null, { userName, clientId, address });
+    return callback('userName already taken');
   }
 
   /**
@@ -123,7 +117,10 @@ module.exports = function () {
      * @param {socket} client to be removed
      */
   function handleDisconnect(client: any) {
-    removeClient(client);
+    // console.log(`${client.id} disconnected ... waiting for reconnect`)
+    // remove client if they don't reconnect after 1 minute
+    // removeClient(client);
+    if (client) console.log()
   }
 
   // const removeHostedRoom = (clientId: string) => {
@@ -135,17 +132,23 @@ module.exports = function () {
    * @param {string} clientId
    * @return {Promise} client
    */
-  function getClientById(clientId: string): Promise<Client> {
-    return new Promise((resolve) => {
-      const client = clients.get(clientId);
-      if (client) resolve(client);
-    });
+  function getClientById(clientId: string) {
+      let reconnected = getReconnectId(clientId);
+      let client = clients.get(reconnected);
+      return client;
+  }
+
+  function getReconnectId(clientId: string): string {
+    let reconnected = reconnectedIds.get(clientId);
+    return reconnected ? reconnected : clientId
   }
 
   return {
     handleRegister,
     handleDisconnect,
+    handleReconnect,
     getClientByUserName,
+    getReconnectId,
     addClient,
     getClientById,
   };

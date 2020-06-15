@@ -16,12 +16,10 @@ const images = importAll(require.context('../assets/deck', false, /.png$/));
 export const Game = (props) => {
   const dispatch = useDispatch()
 
-  const [gameState, setGameState] = useState(undefined)
   const [playerCards, setPlayerCards] = useState([])
   const [playedCards, setPlayedCards] = useState([])
   const [waitingOnDefender, setWaitingOnDefender] = useState(false)
   const [dropDisabled, setDropDisabled] = useState(false)
-  const [trump, setTrump] = useState(undefined)
   const [message, setMessage] = useState(undefined)
   const [canFinish, setCanFinish] = useState(false)
   const [canPickup, setCanPickup] = useState(false)
@@ -38,14 +36,12 @@ export const Game = (props) => {
     // cardsInZone = cardsInZone ? cardsInZone.flat() : cardsInZone
     if (cardsInZone) setPlayedCards(helpers.updateOrdered(playedCards, cardsInZone))
 
-  }, [props.gameState, props.error, props.user.clientId])
+  }, [props.gameState, props.error, props.user?.clientId])
 
   const setupHand = () => {
     const playerIndex = getPlayerIndex()
     const cardsInHand = props.gameState?.players[playerIndex].cards
     
-    if (!cardsInHand) setGameState(props.gameState)
-
     if (cardsInHand) {
       if ((cardsInHand.length !== playerCards.length) || cardsInHand.length === 0) {
         setPlayerCards(helpers.updateOrdered(playerCards, cardsInHand))
@@ -55,7 +51,7 @@ export const Game = (props) => {
 
   const getPlayerIndex = () => {
     return props.gameState?.players?.findIndex((player) => {
-      return player.player.clientId === props.user.clientId
+      return player.player.clientId === props.user?.clientId
     })
   }
 
@@ -67,8 +63,8 @@ export const Game = (props) => {
     let enabled = true;
     setWaitingOnDefender(false)
   
-    const currentPlayerIsAttacker = props?.gameState?.attacker?.clientId === props.user.clientId
-    const currentPlayerIsDefender = props?.gameState?.defender?.clientId === props.user.clientId
+    const currentPlayerIsAttacker = props?.gameState?.attacker?.clientId === props.user?.clientId
+    const currentPlayerIsDefender = props?.gameState?.defender?.clientId === props.user?.clientId
     
     console.log('isAttacker', currentPlayerIsAttacker);
     console.log('isDefender', currentPlayerIsDefender);
@@ -402,7 +398,7 @@ export const Game = (props) => {
       {!props.gameState && 
         <>
         {props.players?.map((player) => (
-            player.userName !== props.user.userName &&
+            player.userName !== props.user?.userName &&
           <div
             key={player.userName}
             className='opponent-chip'>

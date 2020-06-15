@@ -1,4 +1,5 @@
 import { roomConstants } from '../constants/roomConstants'
+import { userConstants } from '../constants/userConstants'
 
 const initialState = {
 }
@@ -58,6 +59,11 @@ export function rooms (state = initialState, action) {
       return {
         ...state,
         players: action.players
+      }
+    case userConstants.RECONNECT_INFO:
+      if (action.appState.inRoom)
+      return {
+        inRoom: action.appState.InRoom
       }
     default:
       return state

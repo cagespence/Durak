@@ -4,6 +4,7 @@ import { Client } from '../clients/clientTypes';
 
 module.exports = function () {
   const rooms = new Map<string, Room>();
+  const roomArray: Room[] = [];
 
   /**
      * Handle user creating a room
@@ -40,33 +41,35 @@ module.exports = function () {
   };
 
   /**
-     * Add valid room to list of rooms
-    */
+   * Add valid room to list of rooms
+   */
 
   /**
-     * Creates a room and adds client as host and member
-     * @param client client creating room
-     * @param roomId id of room that should be created
-     * @param callback callback to send back room info to caller
-     */
+   * Creates a room and adds client as host and member
+   * @param client client creating room
+   * @param roomId id of room that should be created
+   * @param callback callback to send back room info to caller
+   */
   const createRoom = (client: Client, roomId: string, callback: RoomCreatedCallback): void => {
     console.log('✔ room created ' + roomId);
-    rooms.set(roomId, {
+    const newRoom = {
       roomId: roomId,
       roomInfo: {
         host: client,
         clients: [client],
-      },
-    });
+      }
+    }
+    rooms.set(roomId, newRoom);
+    roomArray.push(newRoom)
     callback(null, roomId);
   };
 
   /**
-     * Handle client trying to join a room
-     * @param {Client} client client attempting to join
-     * @param {string} roomId room client wants to join
-     * @param {function(err, res)} callback to return data to clietn
-     */
+   * Handle client trying to join a room
+   * @param {Client} client client attempting to join
+   * @param {string} roomId room client wants to join
+   * @param {function(err, res)} callback to return data to clietn
+   */
   const handleJoinRoom = async (
     client: Client,
     roomId: string,
@@ -115,6 +118,9 @@ module.exports = function () {
     };
 
     rooms.set(roomId, updatedRoom);
+    const index = roomArray.findIndex(room => room.roomId === roomId)
+    roomArray.splice(index, 1)
+    roomArray.push(updatedRoom)
   };
 
   // remove client from room
@@ -137,19 +143,35 @@ module.exports = function () {
    * returns a room
    * @param client client to search for
    */
-  async function findRoomByClient(client: Client) {
-    const roomList = Array.from(rooms.values());
-    return new Promise((resolve) => {
-      roomList.forEach((r) => {
-        r.roomInfo.clients.forEach((c) => {
-          // console.log(c.userName);
-          if (c.clientId === client.clientId) {
-            // console.log(`found client in ${r.roomId}`)
-            resolve(r);
+  function findRoomByClient(clientId: string): Room {
+    console.log('searching ...')
+    
+      // const roomList = Array.from(rooms.values());
+      const roomList = roomArray
+      let found = undefined;
+
+      for (let i = 0; i < roomList.length; i++) {
+        const room = roomList[i];
+        for (let j = 0; j < room.roomInfo.clients.length; j++) {
+          const client = room.roomInfo.clients[j];
+          if (client.clientId === clientId) {
+            // console.log(`found client in ${room.roomId}`)
+            found = room;
+            // console.log('found1', clientId, found)
+            // resolve(found)
           }
-        });
-      });
-    });
+        }
+      }
+  
+    console.log('found2', clientId, found)
+    return found
+
+      // if (found) {
+      //   resolve(found)
+      // }
+      // else {
+      //   reject('not in a room')
+      // }
   }
 
   // check if user doesnt currently host any rooms already
@@ -185,11 +207,10 @@ module.exports = function () {
   const handleLeaveRoom = (client: Client) => {
     // console.log(`${client.userName} leaving room ...`)
     if (isInRoom(client)) {
-      findRoomByClient(client).then((room: Room) => {
-        if (room) {
-          removeClientFromRoom(client, room);
-        }
-      });
+      const room = findRoomByClient(client.clientId)
+      if (room) {
+        removeClientFromRoom(client, room);
+      }
     }
   };
 
@@ -231,6 +252,7 @@ module.exports = function () {
     removeHostedRoom,
     handleLeaveRoom,
     getClientsInRoom,
+    findRoomByClient,
     // leaveRoom
   };
 };

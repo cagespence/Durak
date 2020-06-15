@@ -17,6 +17,12 @@ export function registration(state = initialState, action) {
       return {
         error: action.error
       };
+    case userConstants.RECONNECT_INFO:
+      console.log('reconnect info in user', action)
+      if (action.appState.user)
+      return {
+        user: action.appState.user
+      };
     default: 
       return state
   }

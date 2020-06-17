@@ -286,6 +286,7 @@ export const Game = (props) => {
             className='card'
           >
             <img
+              alt={`${value} of ${suit}`}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -315,6 +316,7 @@ export const Game = (props) => {
           className={
             props?.gameState?.trump === suit ? 'trump' : ''
           }
+          alt={`${value} of ${suit}`}
           src={props.images[imageUrl]}>
         </img>
       </div>

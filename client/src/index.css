@@ -383,3 +383,10 @@ textarea {
     font-family: 'Din';
     src: url('./assets/fonts/DINNextLTPro-Regular.woff')  format('woff'); /* Safari, Android, iOS */
 }
+
+/* @font-face {
+    src: url("https://use.typekit.net/sbt5dgz.css");
+    font-family: 'utopia-std-headline', serif;
+    font-weight: 400;
+    font-style: normal;
+} */

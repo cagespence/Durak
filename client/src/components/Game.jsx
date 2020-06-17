@@ -2,16 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { connect, useDispatch } from 'react-redux'
 import { gameActions } from '../redux/actions/gameActions'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { Animated } from "react-animated-css";
 
 import helpers from '../helpers'
-
-function importAll(r) {
-  let images = {};
-  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-  return images;
-}
-
-const images = importAll(require.context('../assets/deck', false, /.png$/));
 
 export const Game = (props) => {
   const dispatch = useDispatch()
@@ -302,7 +295,7 @@ export const Game = (props) => {
               style={{
                 ...provided.draggableProps.style
               }}
-              src={images[imageUrl]}>
+              src={props.images[imageUrl]}>
               {provided.placeholder}
             </img>
           </div>
@@ -322,7 +315,7 @@ export const Game = (props) => {
           className={
             props?.gameState?.trump === suit ? 'trump' : ''
           }
-          src={images[imageUrl]}>
+          src={props.images[imageUrl]}>
         </img>
       </div>
     )
@@ -402,13 +395,21 @@ export const Game = (props) => {
       {!props.gameState && 
         <>
         {props.players?.map((player) => (
-            player.userName !== props.user.userName &&
+            // player.userName !== props.user.userName &&
           <div
             key={player.userName}
             className='opponent-chip'>
               {player.userName}
             </div>
-          ))}
+        ))
+        }
+        {props.players.length < 6 && new Array(6 - props.players.length).fill('empty').map((empty, index) => (
+          <div
+          key={`empty-${index}`}
+          className='opponent-chip dark'>
+            empty
+          </div>
+        ))}
           {props.isHost && <button className='button' onClick={handleStartGame}>
             everyone's in
           </button>}

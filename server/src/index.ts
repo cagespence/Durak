@@ -65,7 +65,7 @@ io.on('connection', (client: any) => {
   client.on('join-room',
       (roomId: string, callback: RoomJoinedCallback) => {
         getClientById(client.id).then((_client: Client) => {
-          handleJoinRoom(_client, roomId.toLowerCase(), callback).then(clients => {
+          handleJoinRoom(_client, roomId.toLowerCase(), callback).then((clients: Client[]) => {
             if (clients) {
               io.emit('player-list', clients);
             }
@@ -78,7 +78,11 @@ io.on('connection', (client: any) => {
   client.on('create-room',
       (roomId: string, callback: RoomCreatedCallback) => {
         getClientById(client.id).then((_client: Client) => {
-          handleCreateRoom(_client, roomId.toLowerCase(), callback);
+          handleCreateRoom(_client, roomId.toLowerCase(), callback).then((successful: boolean) => {
+            if (successful) {
+              io.emit('player-list', [_client]);
+            }
+          })
         });
       });
 

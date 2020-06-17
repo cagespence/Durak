@@ -45,7 +45,7 @@ export const JoinRoom = (props) => {
             value={joinRoomId}
             placeholder="Room code"
             />
-            <button className='button'>
+            <button disabled={joinRoomId.length < 1} className='button'>
             Join
           </button>
           </div>

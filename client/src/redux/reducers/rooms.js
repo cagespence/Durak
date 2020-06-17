@@ -1,6 +1,7 @@
 import { roomConstants } from '../constants/roomConstants'
 
 const initialState = {
+  players: []
 }
 
 export function rooms (state = initialState, action) {

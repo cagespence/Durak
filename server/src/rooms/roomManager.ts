@@ -20,12 +20,16 @@ module.exports = function () {
     client: Client,
     roomId: string,
     callback: RoomCreatedCallback
-  ): void => {
-    return (
-      validRoom(client, roomId, callback) ?
-        createRoom(client, roomId, callback) :
+  ): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      if (validRoom(client, roomId, callback)) {
+        createRoom(client, roomId, callback)
+        resolve(true)
+      } else {
         callback('error creating room')
-    );
+        reject(false)
+      }
+    });
   };
 
   // check if room is valid to create / join

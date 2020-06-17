@@ -25,25 +25,27 @@ const RegisterForm = () => {
   } 
 
   return (
-    <form autoComplete='off' onSubmit={handleRegister}>
-      <div className='middle'>
-        <div>
+    <div className="center-vertical">
+      <form autoComplete='off' onSubmit={handleRegister}>
+        <div className='middle'>
           <div>
-            <input 
-              onChange={handleEnterName}
-              value={userName}
-              placeholder="Username" 
-              id='userName' 
-              name='userName' 
-              type='text'
-            />
-            <button className = 'button'>
-              Join
-            </button>
+            <div>
+              <input 
+                onChange={handleEnterName}
+                value={userName}
+                placeholder="Username" 
+                id='userName' 
+                name='userName' 
+                type='text'
+              />
+              <button disabled={userName.length < 1} className = 'button'>
+                Join
+              </button>
+            </div>
           </div>
         </div>
+        </form>
       </div>
-    </form>
   )
 }
 

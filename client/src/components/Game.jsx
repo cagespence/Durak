@@ -31,7 +31,7 @@ export const Game = (props) => {
     // cardsInZone = cardsInZone ? cardsInZone.flat() : cardsInZone
     if (cardsInZone) setPlayedCards(helpers.updateOrdered(playedCards, cardsInZone))
 
-  }, [props.gameState, props.error, props.user.clientId, configureDropZone, playedCards, setupHand])
+  }, [props.gameState, props.error, props.user.clientId])
 
   const setupHand = () => {
     const playerIndex = getPlayerIndex()

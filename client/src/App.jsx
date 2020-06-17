@@ -6,12 +6,12 @@ import Game from './components/Game';
 
 function importAll(r) {
   let images = {};
-  r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+  r.keys().forEach((item, index) => { images[item.replace('./', '')] = r(item); });
   return images;
 }
 
 const images = importAll(require.context('./assets/deck', false, /.png$/));
-const aces = ['14H.png', '14C.png', '14D.png', '14S.png']
+// const aces = ['14H.png', '14C.png', '14D.png', '14S.png']
 
 
 function App(props) {

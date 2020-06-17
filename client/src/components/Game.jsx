@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { connect, useDispatch } from 'react-redux'
 import { gameActions } from '../redux/actions/gameActions'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { Animated } from "react-animated-css";
+// import { Animated } from "react-animated-css";
 
 import helpers from '../helpers'
 
 export const Game = (props) => {
   const dispatch = useDispatch()
 
-  const [gameState, setGameState] = useState(undefined)
+  // const [gameState, setGameState] = useState(undefined)
   const [playerCards, setPlayerCards] = useState([])
   const [playedCards, setPlayedCards] = useState([])
   const [waitingOnDefender, setWaitingOnDefender] = useState(false)
   const [dropDisabled, setDropDisabled] = useState(false)
-  const [trump, setTrump] = useState(undefined)
+  // const [trump, setTrump] = useState(undefined)
   const [message, setMessage] = useState(undefined)
   const [canFinish, setCanFinish] = useState(false)
   const [canPickup, setCanPickup] = useState(false)

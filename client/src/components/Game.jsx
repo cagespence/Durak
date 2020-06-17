@@ -37,7 +37,7 @@ export const Game = (props) => {
     const playerIndex = getPlayerIndex()
     const cardsInHand = props.gameState?.players[playerIndex].cards
     
-    if (!cardsInHand) setGameState(props.gameState)
+    // if (!cardsInHand) setGameState(props.gameState)
 
     if (cardsInHand) {
       if ((cardsInHand.length !== playerCards.length) || cardsInHand.length === 0) {

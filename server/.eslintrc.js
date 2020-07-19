@@ -4,6 +4,7 @@ module.exports = {
     'node': true,
   },
   'extends': [
+    "eslint:recommended",
     'google',
   ],
   'globals': {
@@ -22,5 +23,8 @@ module.exports = {
     '@typescript-eslint',
   ],
   'rules': {
+    "linebreak-style": "off",
+    "no-unused-vars": "off",
+    "react-hooks/exhaustive-deps": "disabled"
   },
 };

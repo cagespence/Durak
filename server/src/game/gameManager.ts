@@ -1,4 +1,4 @@
-import { Client } from '../clients/clientTypes';
+import {Client} from '../clients/clientTypes';
 
 import {
   GameStateCallback,
@@ -21,7 +21,7 @@ interface StartGame {
   (clients: Client[])
 }
 
-module.exports = function () {
+module.exports = function() {
   const games = new Map<string, gameInterface>();
 
   const newGame = (roomId: string) => {
@@ -29,9 +29,9 @@ module.exports = function () {
   };
 
   const startGame = (
-    roomId: string,
-    players: Client[],
-    callback: GameStateCallback
+      roomId: string,
+      players: Client[],
+      callback: GameStateCallback
   ) => {
     if (gameExists(roomId)) {
       callback('Game has already been started');
@@ -46,14 +46,14 @@ module.exports = function () {
       const game = games.get(roomId);
       game.startGame(players);
       callback(null, game.gameState);
-      return game.gameState; 
+      return game.gameState;
     }
   };
 
   const nextRound = (roomId: string) => {
     // set new players
     const game = games.get(roomId);
-    game.nextRound()
+    game.nextRound();
     games.set(roomId, game);
     return game.gameState;
   };
@@ -62,19 +62,18 @@ module.exports = function () {
     // set new players
     // deal cards to players (if they need them) in correct order
     const game = games.get(roomId);
-    game.pickUp()
+    game.pickUp();
     games.set(roomId, game);
     return game.gameState;
   };
 
   const verifyAttack = (
-    card: Card, 
-    clientId: string,
-    roomId: string,
-    callback: any,
-    gameState: GameStateInterface
+      card: Card,
+      clientId: string,
+      roomId: string,
+      callback: any,
+      gameState: GameStateInterface
   ) => {
-
     // can't attack on non existent room
     if (!gameExists(roomId)) {
       callback('Game does not exist');
@@ -93,20 +92,19 @@ module.exports = function () {
       return false;
     }
 
-    // if defender has defended one, the attacker can attack again if the value matches any in the pairs already
+    // if defender has defended one, the attacker can attack
+    // again if the value matches any in the pairs already
     // TODO: this is a pretty messy function - should be cleaned up
     const pair = gameState.pairs.slice(-1)[0];
     if (pair?.defend) {
-
       const sameValue = gameState.pairs.some((p) => {
-        return (p.attack.value === card.value || p.defend.value === card.value)
+        return (p.attack.value === card.value || p.defend.value === card.value);
       });
 
       if (!sameValue) {
-        callback('Card value doesn\'t match any on the table')
+        callback('Card value doesn\'t match any on the table');
         return false;
       }
-      
     }
 
     if (!pair?.defend && pair?.attack) {
@@ -115,8 +113,8 @@ module.exports = function () {
     }
 
     // default true so it doesn't always fail
-    return true
-  }
+    return true;
+  };
 
   /**
    * Remove the played card from the player
@@ -126,20 +124,19 @@ module.exports = function () {
    * @param gameState the state of the game to be updated
    */
   const removeCardFromAttacker = (
-    card: Card,
-    clientId: string,
-    gameState: GameStateInterface
+      card: Card,
+      clientId: string,
+      gameState: GameStateInterface
   ) => {
-
     const playerIndex = gameState.players.findIndex((player) => {
       return player.player.clientId === clientId;
     });
 
     const cardIndex = gameState.players[playerIndex].cards
-      .findIndex((_card) => {
-        console.log(_card);
-        return (_card.suit === card.suit && _card.value === card.value);
-      });
+        .findIndex((_card) => {
+          console.log(_card);
+          return (_card.suit === card.suit && _card.value === card.value);
+        });
 
     const cards = gameState.players[playerIndex].cards;
     cards.splice(cardIndex, 1);
@@ -147,25 +144,24 @@ module.exports = function () {
     if (playerIndex && cardIndex) {
       gameState.players[playerIndex].cards = cards;
     }
-  }
+  };
 
   const attack = (
-    card: Card,
-    clientId: string,
-    roomId: string,
-    callback: GameStateCallback
+      card: Card,
+      clientId: string,
+      roomId: string,
+      callback: GameStateCallback
   ): boolean | GameStateInterface => {
+    const mutatedGame = games.get(roomId);
 
-    let mutatedGame = games.get(roomId);
-
-    console.log('attacking')
+    console.log('attacking');
 
     if (!verifyAttack(card, clientId, roomId, callback, mutatedGame.gameState)) {
       console.log('attack failed');
       return false;
     }
 
-    removeCardFromAttacker(card, clientId, mutatedGame.gameState)
+    removeCardFromAttacker(card, clientId, mutatedGame.gameState);
 
     mutatedGame.gameState.pairs.push({
       attack: card,
@@ -179,27 +175,27 @@ module.exports = function () {
   };
 
   const defend = (
-    attacking: Card,
-    defending: Card,
-    clientId: string,
-    roomId: string,
-    callback: GameStateCallback
+      attacking: Card,
+      defending: Card,
+      clientId: string,
+      roomId: string,
+      callback: GameStateCallback
   ) => {
     const mutatedGame = games.get(roomId);
 
     console.log(attacking, defending);
 
     const highest = highestCard(
-      attacking,
-      defending,
-      mutatedGame.gameState.trump
+        attacking,
+        defending,
+        mutatedGame.gameState.trump
     );
 
-    console.log('highest', highest)
+    console.log('highest', highest);
 
     if (!highest) {
-      callback('Unable to defend with this card')
-      return false
+      callback('Unable to defend with this card');
+      return false;
     }
 
     if (
@@ -227,13 +223,13 @@ module.exports = function () {
       return player.player.clientId === clientId;
     });
     const cardIndex = mutatedGame.gameState.players[playerIndex].cards
-      .findIndex((_card) => {
-        console.log(_card);
-        return (
-          _card.suit === defending.suit &&
+        .findIndex((_card) => {
+          console.log(_card);
+          return (
+            _card.suit === defending.suit &&
           _card.value === defending.value
-        );
-      });
+          );
+        });
     const cards = mutatedGame.gameState.players[playerIndex].cards;
     cards.splice(cardIndex, 1);
     if (playerIndex && cardIndex) {
@@ -271,7 +267,7 @@ module.exports = function () {
   /**
    * Returns the highest card, taking into account the trump suit
    * if the cards are not compatable, returns undefined
-   * 
+   *
    * @param attack Attacking card
    * @param defend Defending card
    * @param trump Trump suit

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux'
 import RegisterForm from './components/RegisterForm';
 import Rooms from './components/Rooms';
@@ -10,15 +10,18 @@ function importAll(r) {
   return images;
 }
 
-const images = importAll(require.context('./assets/deck', false, /.png$/));
-// const aces = ['14H.png', '14C.png', '14D.png', '14S.png']
-
 
 function App(props) {
+  const [images, setImages] = useState([])
+  
+  useEffect(() => {
+    setImages(importAll(require.context('./assets/deck', false, /.png$/)))
+  }, [])
   return (
     <div className="App">
-      <div className={`title ${!props.user ? 'large' : ''}`}>
-        <div>DURAK!</div>
+      <div className={`title 
+      ${!props.user ? 'large' : ''}`}>
+        <div>RUSSIAN FOOL</div>
         {/* {props.gameState && <button className="button scores">scores</button>} */}
       </div>
 
@@ -41,7 +44,12 @@ function App(props) {
       {props.inRoom &&
         <>
           {!props.gameState && (
-            <div className="room-code">Room <u>{props.inRoom}</u></div>
+            <>
+            <div className="room-code"><u>{props.inRoom}</u></div>
+            <div className='message'>
+              share the room code above with friends
+            </div>
+            </>
           )}
           <Game images={images} />
         </>}

@@ -33,7 +33,7 @@ export const JoinRoom = (props) => {
           {props.error}
         </div>
       }
-      <button onClick={handleCreateRoom} className='button'>
+      <button onClick={handleCreateRoom} className='button new-game'>
         new game
       </button>
       <form onSubmit={handleJoinRoom}>

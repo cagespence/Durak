@@ -1,19 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
-// @import url("https://use.typekit.net/sbt5dgz.css");
 @import url("https://use.typekit.net/wkk2ccy.css");
 
 :root {
-  // --color-dark: #640d14;
-  --color-dark: #66000C;
-  // --color-light: #f4d06f;
-  --color-light: #F2BD0C;
-  // --color-primary: #7e92f1;
-  // --color-secondary:#ad2831;
-  --color-secondary:#990011;
-  --color-white: #fffdf6;
+  // --color-dark: #66000C;
+  // --color-light: #F2BD0C;
+  // --color-secondary:#990011;
+  // --color-white: #fffdf6;
+  --color-dark: #F2BD0C;
+  --color-light: #66000C;
+  --color-secondary:#fffdf6;
+  --color-white: #000;
   --card-width: 130px;
   --max-width: 600px;
   --animate-duration: 800ms;
+  --counter-var: 0;
+}
+
+::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+  background: #ffffff00;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #393812;
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-border-radius: 0;
+  -webkit-box-shadow: none;
+}
+
+::-webkit-scrollbar-corner {
+  background: #000;
 }
 
 html {
@@ -99,25 +117,22 @@ button.scores {
   height: auto;
   display: flex;
   flex-direction: row;
+  counter-reset: cardCounter;
 }
 
 .card {
-  // height: calc(var(--card-width) * 1.633);
   margin-bottom: 1em;
-  /* display: flex;
-  flex-grow: 1;
-  width: 0; */
 }
 
 .zone {
-  box-sizing: border-box;
+  // box-sizing: border-box;
   border-radius: .5em;
   border: .3em dashed var(--color-dark);
-  animation: example 1s ease-in 0s;
+  // animation: example 1s ease-in 0s;
   width: var(--card-width);
   height: calc(var(--card-width) * 1.5);
-  transition: all 500ms;
-  margin-right: 5vw;
+  // transition: all 500ms;
+  margin-right: 20px;
 }
 
 // .center-vertical {
@@ -141,36 +156,66 @@ button.scores {
 
 .card img {
   width: var(--card-width);
-  // width: 150px;
-  height: auto;
+  height: calc(var(--card-width) * 1.5);
   box-sizing: content-box;
-  margin-right: 1em;
+  margin-right: 20px;
+  border: 5px solid ;
+  border-radius: 15px;
+  transition: all 250ms;
+  &.placeholder {
+    border: 5px solid #00000c91;
+  }
 }
+ 
+.card div {
+  width: var(--card-width);
+  height: calc(var(--card-width) * 1.5);
+  box-sizing: content-box;
+  margin-right: 20px;
+  border: 5px solid #000;
+  border-radius: 15px;
+  transition: all 250ms;
+  background-color: var(--color-secondary);
+  &.placeholder {
+    border: 5px solid #00000c91;
+  }
+}
+
+@media (max-width:780px) {
+  div[data-rbd-droppable-id = "hand"] {
+    margin-left: 0 !important;
+    // padding-left: 20px;
+    margin-right: 0 !important ;
+    width:100% !important ;
+  }
+}
+
+
 
 div[data-rbd-droppable-id = "hand"] {
   overflow-x: auto;
-  /* height: calc((var(--card-width) * 1.633) + 3vh); */
-  padding-left: 1em;
-  padding-right: 5vw;
-  // margin-left: 1em;
+  // padding-left: 1em;
+  // padding-right: 5vw;
   scrollbar-width: none;
-  // width: 100vw;
-  // position: fixed;
-  // left: 0;
-  // bottom: 0;
-  /* margin-top: 1em; */
+  margin-left: auto;
+  margin-right: auto;
+  transition: margin 500ms;
+  // &:nth-child(n){
+  //   width: calc(n * var(--card-width))
+  // }
 }
 
-div[data-rbd-droppable-id = "play-zone"] {
-  /* overflow-x: auto; */
-  z-index: 1000;  
-  /* width: auto; */
-  /* margin-bottom: 1em; */
-  scrollbar-width: none;
-}::webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
+// div[data-rbd-droppable-id = "play-zone"] {
+//   /* overflow-x: auto; */
+//   // z-index: 1000;  
+//   // width: 100%;
+//   // margin: 0 10px;
+//   /* margin-bottom: 1em; */
+//   scrollbar-width: none;
+// }::webkit-scrollbar {
+//   width: 0;
+//   background: transparent;
+// }
 
 .message {
   max-width: var(--max-width);
@@ -198,6 +243,8 @@ div[data-rbd-droppable-id = "play-zone"] {
   overflow-x: auto;
   scrollbar-width: none;
   /* margin-bottom: 1em; */
+  margin-left: auto;
+  margin-right: auto;
   flex: 1;
   /* position: relative; */
   /* justify-content: center; */
@@ -206,11 +253,11 @@ div[data-rbd-droppable-id = "play-zone"] {
 
 .played-cards :nth-child(2n) {
   /* margin-left: calc(var(--card-width) / -1);   */
-  margin-left: calc(var(--card-width) * -1);
-  padding-left: 0;
-  filter: opacity(90%);
-  margin-top: 1em;
-  margin-bottom: 0;
+  // margin-left: calc(var(--card-width) * -1);
+  // padding-left: 0;
+  // // filter: opacity(90%);
+  // margin-top: 1.5em;
+  // margin-bottom: 0;
 }
 
 .title {
@@ -225,18 +272,18 @@ div[data-rbd-droppable-id = "play-zone"] {
   padding-top: .15em;
   // text-align: center;
   // font-family: 'Becker';
-  font-family: thunderhouse-pro, sans-serif;
-  font-weight: 400;
+  // font-family: thunderhouse-pro, sans-serif;
+  font-weight: 200;
   font-style: normal;
   /* font-size: 7vw; */
   // background-color: var(--color-white);
   color: var(--color-white);
-  font-size: 3em;
+  font-size: 2em;
   /* display: none; */
 }
 
 .large {
-  font-size: 6em;
+  font-size: 5em;
 }
 
 /* @media (max-width: 800px) {
@@ -251,16 +298,18 @@ div[data-rbd-droppable-id = "play-zone"] {
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 1em;
   padding: .2em 0;
-  background-color: var(--color-white);
+  background-color: var(--color-dark);
   border: 0;
-  color: var(--color-dark);
+  color: var(--color-secondary);
   // box-shadow: 0 .5em 1em var(--color-dark);
   font-size: 2em;
   text-transform: uppercase;
   box-sizing: border-box;
   &:disabled {
     color: var(--color-secondary);
+    filter: opacity(50%);
     &:hover {
       width: 80%;
       max-width: var(--max-width);
@@ -272,29 +321,35 @@ div[data-rbd-droppable-id = "play-zone"] {
   }
 }
 
+.new-game {
+
+}
+
 input[type='text']::placeholder {
   color: var(--color-white);
+  opacity: 50%;
 }
 
 input[type='text'] {
-  width: 100%;
-  height: 4em;
+  width: 90%;
+  height: 2em;
+  max-width: var(--max-width);
   color: var(--color-white);
-  border: none;
+  border: 3px solid var(--color-white);
   text-transform: uppercase;
   text-align: center;
-  // font-family: 'Helvetica';
-  // font-weight: 900;
   background-color: var(--color-secondary);
-  border-top: 5px solid var(--color-white);
-  border-bottom: 5px solid var(--color-white);
+  // border-top: 5px solid var(--color-white);
+  // border-bottom: 5px solid var(--color-white);
   display: block;
   font-size: 2em;
   margin-top: .5em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 input[type='text'] + .button {
-  margin-top: -1em;
+  margin-top: .5em;
 }
 
 .animation__repeat__inf {
@@ -321,17 +376,18 @@ input[type='text'] + .button {
   color: var(--color-white);
   // margin-left: 1em;
   // text-align: center;
-  margin-bottom: .5em;
+  margin-bottom: 1em;
+  margin-top: .5em;
   text-align: center;
   // padding: .3em;
-  font-size: 1em;
+  font-size: 1.2em;
   // border-radius: 0 0 .5em .5em;
   // border-radius: 1em;
   text-transform: uppercase;
   // width: 80vw;
   box-sizing: border-box;
   font-family: sofia-pro,sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-style: normal;
   // margin-bottom: .5em;
 }
@@ -374,11 +430,13 @@ input[type='text'] + .button {
   // margin-top: .5em;
   padding: .5em;
   background-color: var(--color-dark);
-  margin-bottom: .5em;
+  // margin-bottom: .5em;
 }
 
-.trump {
-  filter: invert(100%)
+div.trump {
+  // filter: invert(100%)
+  border: 5px solid orange;
+  border-radius: 15px;
 }
 
 .trump-chip {
@@ -418,3 +476,40 @@ input[type='text'] + .button {
 .filled {
   background-color: var(--color-dark);
 }
+
+// .item-enter {
+//   opacity: 0;
+//   transform: rotateZ(0);
+// }
+// .item-enter-active {
+//   opacity: 1;
+//   transform: translateZ(270);
+//   transition: opacity 3000ms, transform 3000ms;
+// }
+// .item-exit {
+//   opacity: 1;
+// }
+// .item-exit-active {
+//   opacity: 0;
+//   transform: rotateZ(45);
+//   transition: opacity 3000ms, transform 3000ms;
+// }
+
+
+.zone-transition-appear {
+  width: 0; 
+}
+.zone-transition-appear-active {
+  width: 100%; 
+  transition: width 500ms;
+}
+.zone-transition-appear-done {
+  width: 100%;
+  transition-delay: 500ms;
+  transition: width 500ms;
+}
+
+// .dealing.card {
+//   margin-right: -130px;
+//   transition: margin-right 250ms;
+// }

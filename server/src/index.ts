@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 const app = express();
-app.use(cors())
+app.use(cors());
 
 import http from 'http';
 const server = new http.Server(app);
@@ -11,7 +11,10 @@ import socketIo from 'socket.io';
 const io = socketIo(server);
 
 import {Client, ClientRegisteredCallback} from './clients/clientTypes';
-import {RoomCreatedCallback, RoomJoinedCallback, GetRoomsCallback} from './rooms/roomTypes';
+import {
+  RoomCreatedCallback,
+  RoomJoinedCallback,
+  GetRoomsCallback} from './rooms/roomTypes';
 import {GameStateCallback, Card} from './models/gameStateTypes';
 
 // Configuration for server
@@ -43,11 +46,11 @@ const {
   attack,
   defend,
   nextRound,
-  pickUp
+  pickUp,
 } = gameManager();
 
 // Server entry point
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
 });
@@ -82,7 +85,7 @@ io.on('connection', (client: any) => {
             if (successful) {
               io.emit('player-list', [_client]);
             }
-          })
+          });
         });
       });
 
@@ -128,23 +131,23 @@ io.on('connection', (client: any) => {
   );
 
   client.on('next-round', (
-    roomId: string,
+      roomId: string,
   ) => {
     const gameState = nextRound(roomId);
     const clients = getClientsInRoom(roomId);
     if (gameState) {
-      console.log('emitting gamestate for next round')
+      console.log('emitting gamestate for next round');
       io.emit('gamestate', clients, gameState);
     }
   });
 
   client.on('pickup', (
-    roomId: string,
-  ) => { 
+      roomId: string,
+  ) => {
     const gameState = pickUp(roomId);
     const clients = getClientsInRoom(roomId);
     if (gameState) {
-      console.log('emitting gamestate for pickup')
+      console.log('emitting gamestate for pickup');
       io.emit('gamestate', clients, gameState);
     }
   });

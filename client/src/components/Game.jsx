@@ -1,55 +1,83 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import { connect, useDispatch } from 'react-redux'
 import { gameActions } from '../redux/actions/gameActions'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-// import { Animated } from "react-animated-css";
-
 import helpers from '../helpers'
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
+
+function useWindowSize() {
+  const isClient = typeof window === 'object';
+
+  function getSize() {
+    return {
+      width: calcCardWidth(),
+      clientWidth: isClient ? window.innerWidth : undefined,
+    };
+  }
+
+  function calcCardWidth() {
+    const cards = document?.getElementsByClassName('hand')[0]?.childNodes
+    let w = 0
+    if (cards) {
+      w = cards.length * 150
+    }
+    return cards? w : undefined
+  }
+
+  const [windowSize, setWindowSize] = useState(getSize);
+
+  useEffect(() => {
+    if (!isClient) {
+      return false;
+    }
+    
+    function handleResize() {
+      setWindowSize(getSize());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+
+  return [windowSize, setWindowSize, getSize];
+}
 
 export const Game = (props) => {
-  const dispatch = useDispatch()
 
-  // const [gameState, setGameState] = useState(undefined)
+  const dispatch = useDispatch()
+  const [cardsWidth, setCardsWidth, getWidth] = useWindowSize()
   const [playerCards, setPlayerCards] = useState([])
   const [playedCards, setPlayedCards] = useState([])
   const [waitingOnDefender, setWaitingOnDefender] = useState(false)
   const [dropDisabled, setDropDisabled] = useState(false)
-  // const [trump, setTrump] = useState(undefined)
   const [message, setMessage] = useState(undefined)
   const [canFinish, setCanFinish] = useState(false)
   const [canPickup, setCanPickup] = useState(false)
+  const [transitionIn, setTransitionIn] = useState(true)
 
-  useEffect(() => {
-
-    setupHand()
-    configureDropZone()
-
-    let cardsInZone = props.gameState?.pairs?.map(pair => {
-      if (pair.attack && pair.defend) return [pair.attack, pair.defend]
-      if (!pair.defend) return [pair.attack]
-    })?.flat()
-    // cardsInZone = cardsInZone ? cardsInZone.flat() : cardsInZone
-    if (cardsInZone) setPlayedCards(helpers.updateOrdered(playedCards, cardsInZone))
-
-  }, [props.gameState, props.error, props.user.clientId])
+  const fadeInTime = 250
+  
 
   const setupHand = () => {
     const playerIndex = getPlayerIndex()
+
     const cardsInHand = props.gameState?.players[playerIndex].cards
     
-    // if (!cardsInHand) setGameState(props.gameState)
-
     if (cardsInHand) {
       if ((cardsInHand.length !== playerCards.length) || cardsInHand.length === 0) {
+        if (transitionIn){
+          setTimeout(() => {
+            setTransitionIn(false)
+          }, (cardsInHand.length + 1) * fadeInTime)
+        }
         setPlayerCards(helpers.updateOrdered(playerCards, cardsInHand))
       }
     }
-  }
-
-  const getPlayerIndex = () => {
-    return props.gameState?.players?.findIndex((player) => {
-      return player.player.clientId === props.user.clientId
-    })
   }
 
   /**
@@ -62,9 +90,6 @@ export const Game = (props) => {
   
     const currentPlayerIsAttacker = props?.gameState?.attacker?.clientId === props.user.clientId
     const currentPlayerIsDefender = props?.gameState?.defender?.clientId === props.user.clientId
-    
-    console.log('isAttacker', currentPlayerIsAttacker);
-    console.log('isDefender', currentPlayerIsDefender);
 
     const currentPair = props.gameState?.pairs?.slice(-1).pop()
     let attackAgain = []
@@ -84,9 +109,6 @@ export const Game = (props) => {
     const hasDefended =
       currentPair?.attack !== undefined &&
       currentPair?.defend !== undefined
-
-    console.log(hasAttacked);
-    console.log(hasDefended);
 
     if (currentPlayerIsAttacker) {
       enabled = !(hasAttacked && !hasDefended)
@@ -141,6 +163,59 @@ export const Game = (props) => {
     if (hasAttacked) setWaitingOnDefender(true)
     if (hasDefended) setWaitingOnDefender(false)
   }
+  
+  useEffect(() => {
+
+    setupHand()
+    configureDropZone()
+    setCardsWidth(getWidth())
+
+    let cardsInZone = props.gameState?.pairs?.map(pair => {
+      if (pair.attack && pair.defend) return [pair.attack, pair.defend]
+      if (!pair.defend) return [pair.attack]
+    })?.flat()
+    // cardsInZone = cardsInZone ? cardsInZone.flat() : cardsInZone
+    if (cardsInZone) setPlayedCards(helpers.updateOrdered(playedCards, cardsInZone))
+
+  }, [props.gameState, props.error, props.user.clientId])
+
+  useEffect(() => {
+    console.log('checking', cardsWidth)
+    const el = document.querySelectorAll('[data-rbd-droppable-id="hand"]')[0];
+    if (el) {
+      console.log(playerCards.length)
+      console.log(cardsWidth.clientWidth)
+
+      if (playerCards.length * 160 > cardsWidth.clientWidth) {
+      console.log('less')
+      el.style.marginRight = '0';
+      el.style.marginLeft = '0';
+      el.style.overflowX = 'auto'
+      
+      }
+      if (playerCards.length * 160 < cardsWidth.clientWidth) {
+        console.log('more')
+        // const el = document.querySelectorAll('[data-rbd-droppable-id="hand"]')[0];
+        const width = playerCards.length * 160;
+        const clientWidth = cardsWidth.clientWidth;
+        const margins = (clientWidth - width) / 2
+        el.style.marginRight = `${margins}px`;
+        el.style.marginLeft = `${margins}px`;
+        el.style.overflowX = 'visible'
+      }
+    }
+    
+  }, [cardsWidth, playerCards])
+
+  
+
+  const getPlayerIndex = () => {
+    return props.gameState?.players?.findIndex((player) => {
+      return player.player.clientId === props.user.clientId
+    })
+  }
+
+  
 
   /**
    * Helper function to join arrays with commas, and 'or' at the end
@@ -235,11 +310,13 @@ export const Game = (props) => {
         setPlayerCards(reorderedCards)
       }
 
-      if (source.droppableId === 'play-zone') {
-        setPlayedCards(helpers.updateOrdered(playedCards, reorderedCards))
-      }
+      // if (source.droppableId === 'play-zone') {
+      //   setPlayedCards(helpers.updateOrdered(playedCards, reorderedCards))
+      // }
 
-    } else {
+    } 
+    
+    if (source.droppableId !== destination.droppableId){
       const src = source.droppableId === 'hand' ? playerCards : playedCards
       const dest = destination.droppableId === 'hand' ? playerCards : playedCards
 
@@ -270,40 +347,44 @@ export const Game = (props) => {
     }
   };
 
-  const DraggableCard = ({ suit, value, index, isDragDisabled }) => {
-    const imageUrl = `${value + 1}${suit[0].toUpperCase()}.png`
-    // const imageUrl = `${value}-${suit[0]}.png`
+//   const DraggableCard = ({ suit, value, index, isDragDisabled }) => {
+//     const imageUrl = `${value + 1}${suit[0].toUpperCase()}.png`
+//     // const imageUrl = `${value}-${suit[0]}.png`
     
-    return (
-      <Draggable
-        key={`${suit}${value}-draggable`}
-        draggableId={`${suit}${value}`}
-        index={index}
-        isDragDisabled={dropDisabled}
-      >
-        {(provided, snapshot) => (
-          <div
-            className='card'
-          >
-            <img
-              alt={`${value} of ${suit}`}
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              className={
-                props?.gameState?.trump === suit ? 'trump' : ''
-              }
-              style={{
-                ...provided.draggableProps.style
-              }}
-              src={props.images[imageUrl]}>
-              {provided.placeholder}
-            </img>
-          </div>
-        )}          
-      </Draggable>
-    )
-  }
+//     return (
+//       <CSSTransition
+//       key={`${suit}${value}-draggable`}
+//       timeout={fadeInTime}
+//           classNames="item">
+// <Draggable
+//         draggableId={`${suit}${value}`}
+//         index={index}
+//         isDragDisabled={dropDisabled}
+//       >
+//         {(provided, snapshot) => (
+          
+//             <div className={`card`} >
+//               <img
+//                 alt={`${value} of ${suit}`}
+//                 ref={provided.innerRef}
+//                 {...provided.draggableProps}
+//                 {...provided.dragHandleProps}
+//                 className={
+//                   props?.gameState?.trump === suit ? 'trump' : ''
+//                 }
+//                 style={{
+//                   ...provided.draggableProps.style
+//                 }}
+//                 src={props.images[imageUrl]}>
+//               {provided.placeholder}
+//               </img>
+//             </div>
+//         )}          
+//       </Draggable>
+//           </CSSTransition>
+      
+//     )
+//   }
 
   const SimpleCard = ({ suit, value }) => {
     const imageUrl = `${value + 1}${suit[0].toUpperCase()}.png`
@@ -312,47 +393,71 @@ export const Game = (props) => {
       <div
         key={`${value}-${suit}-non-draggable`}
         className='card'>
-        <img
+        <div
           className={
             props?.gameState?.trump === suit ? 'trump' : ''
           }
           alt={`${value} of ${suit}`}
-          src={props.images[imageUrl]}>
-        </img>
-      </div>
-    )
-  }
-
-  const PlayerCards = (props) => {
-    return (
-      <div
-        className='hand'
-      >
-        {console.log('rendering hand')}
-        {playerCards.map((card, index) => {
-          return (
-            <DraggableCard
-              key={`${card.suit}-${card.value}`}
-              {...card}
-              index={index}
-            />
-          )
-        })}
-        <div className='card' style={{
-          visibility: 'hidden'
-        }}>
-          {props.children}
+          src={props.images[imageUrl]}
+          >
+            {`${value} of ${suit}`}
         </div>
       </div>
     )
   }
 
+  const PlayerCards = ({children}) => {
+    return (
+    <div 
+      className='hand'>
+      {playerCards.map((card, index) => {
+        const imageUrl = `${card.value + 1}${card.suit[0].toUpperCase()}.png`
+        return (
+          
+              <div>
+              <Draggable
+              draggableId={`${card.suit}${card.value}`}
+              index={index}
+              isDragDisabled={dropDisabled || transitionIn}>
+                {(provided, snapshot) => (
+                  <div className={`card ${transitionIn && 'dealing'}`}>
+                    <img
+                      alt={`${card.value} of ${card.suit}`}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={
+                        `${props?.gameState?.trump === card.suit ? 'trump' : ''}`
+                      }
+                      style={{
+                        ...provided.draggableProps.style
+                      }}
+                      src={props.images[imageUrl]}
+                      >
+                        {/* {`${card.value} of ${card.suit}`} */}
+                    {provided.placeholder}
+                    </img>
+                  </div>
+                )}          
+              </Draggable>
+              </div>
+          )
+        })}
+        
+          <div className='card placeholder' 
+          style={{ visibility: 'hidden' }}
+          >
+            {children}
+          </div>
+        </div>
+    )
+  }
+
   const DropZone = ({ children, isDraggingOver }) => {
-    console.log('isDraggingOver', isDraggingOver);
     return (
       <div className={`zone ${isDraggingOver ? 'filled' : ''} ${dropDisabled? 'gone': ''}`}>
         <div style={{
-          visibility: 'hidden'
+          // visibility: 'hidden'
         }}>
           {children}
         </div>
@@ -367,20 +472,26 @@ export const Game = (props) => {
           const { suit, value } = card
           return <SimpleCard key={`${suit}-${value}-key`} {...card} />
         })}
-        {!dropDisabled && <Droppable
-          droppableId='play-zone'
-          direction='horizontal'
-          isDropDisabled={dropDisabled}>
-          {(provided, snapshot) => (
-            <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}>
-              <DropZone isDraggingOver={snapshot.isDraggingOver}>
-                {provided.placeholder}
-              </DropZone>
-            </div>
-          )}
-        </Droppable>
+        {!dropDisabled && 
+          <CSSTransition 
+            appear={!dropDisabled}
+            in={!dropDisabled}
+            classNames="zone-transition">
+              <Droppable
+                droppableId='play-zone'
+                direction='horizontal'
+                isDropDisabled={dropDisabled}>
+                {(provided, snapshot) => (
+                  <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}>
+                    <DropZone isDraggingOver={snapshot.isDraggingOver}>
+                      {provided.placeholder}
+                    </DropZone>
+                  </div>
+                )}
+              </Droppable>
+          </CSSTransition>
         }
         {props.children}
       </div>
@@ -412,9 +523,14 @@ export const Game = (props) => {
             empty
           </div>
         ))}
-          {props.isHost && <button className='button' onClick={handleStartGame}>
-            everyone's in
-          </button>}
+          {props.isHost ? 
+            <button className='button' onClick={handleStartGame}>
+              everyone's in
+            </button>
+            :
+            <div className="message">
+              waiting on the host to start
+            </div> }
         </>
       }
       {props.gameState &&

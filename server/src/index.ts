@@ -10,12 +10,31 @@ const server = new http.Server(app);
 import socketIo from 'socket.io';
 const io = socketIo(server);
 
-import {Client, ClientRegisteredCallback} from './clients/clientTypes';
+// const session = require("express-session")({
+//   secret: "my-secret",
+//   resave: true,
+//   saveUninitialized: true
+// })
+
+// import sharedsession from "express-socket.io-session";
+
+// // Attach session
+// app.use(session);
+
+// // Share session with io sockets
+
+// io.use(sharedsession(session));
+
+import { 
+  Client, 
+  ClientRegisteredCallback } from './clients/clientTypes';
 import {
   RoomCreatedCallback,
   RoomJoinedCallback,
   GetRoomsCallback} from './rooms/roomTypes';
-import {GameStateCallback, Card} from './models/gameStateTypes';
+import { 
+  GameStateCallback, 
+  Card } from './models/gameStateTypes';
 
 // Configuration for server
 // const {PORT} = require('./config/serverConfig');
@@ -47,6 +66,7 @@ const {
   defend,
   nextRound,
   pickUp,
+  deal,
 } = gameManager();
 
 // Server entry point
@@ -109,12 +129,28 @@ io.on('connection', (client: any) => {
       roomId: string,
       callback: GameStateCallback
   ) => {
+    console.log('starting game')
     const clients = getClientsInRoom(roomId);
     const gameState = startGame(roomId.toLowerCase(), clients, callback);
     if (gameState) {
       io.emit('gamestate', clients, gameState);
     }
   });
+
+  client.on('deal', async (
+    roomId: string,
+    callback: GameStateCallback
+    ) => {
+      console.log('dealing server')
+      const clients = getClientsInRoom(roomId)
+      const gameState = await deal(roomId, callback)
+      console.log(gameState.players[0].cards)
+      console.log(gameState.players[1].cards)
+      if (gameState) {
+        io.emit('gamestate', clients, gameState)
+      }
+    }
+  )
 
   client.on('attack', (
       card: Card,

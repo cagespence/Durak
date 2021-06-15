@@ -15,6 +15,7 @@ interface gameInterface {
   gameState: GameStateInterface
   nextRound: any
   pickUp: any
+  dealCards: any
 }
 
 interface StartGame {
@@ -50,6 +51,16 @@ module.exports = function() {
     }
   };
 
+  const deal = async (
+    roomId: string,
+    callback: GameStateCallback
+    ) => {
+      const game = games.get(roomId);
+      await game.dealCards(game.gameState.drawPile, game.gameState.players);
+      callback(null, game.gameState)
+      return (game.gameState)
+  }
+
   const nextRound = (roomId: string) => {
     // set new players
     const game = games.get(roomId);
@@ -74,6 +85,7 @@ module.exports = function() {
       callback: any,
       gameState: GameStateInterface
   ) => {
+
     // can't attack on non existent room
     if (!gameExists(roomId)) {
       callback('Game does not exist');
@@ -293,5 +305,6 @@ module.exports = function() {
     nextRound,
     defend,
     pickUp,
+    deal,
   };
 };

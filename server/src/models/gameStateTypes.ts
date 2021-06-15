@@ -2,10 +2,10 @@
 import { Client } from '../clients/clientTypes';
 
 export enum Suit {
-  Hearts = 'hearts',
-  Diamonds = 'diamonds',
-  Spades = 'spades',
-  Clubs = 'clubs'
+  Hearts = '♥',
+  Diamonds = '♦',
+  Spades = '♠',
+  Clubs = '♣'
 }
 
 export enum Value {

@@ -48,7 +48,7 @@ module.exports = function () {
     setPlayers(players);
     setAttackerAndDefender();
     setDrawPile(createShuffledDeck());
-    dealCards(gameState.drawPile, gameState.players); 
+    // dealCards(gameState.drawPile, gameState.players); 
     pickTrump();
   };
 
@@ -94,7 +94,8 @@ module.exports = function () {
    * @param cards list of cards to deal from
    * @param players list of players to deal cards to
    */
-  const dealCards = (cards: Card[], players: Player[]): void => {
+  const dealCards = async (cards: Card[], players: Player[]) => {
+    console.log('dealing')
     players.forEach((player) => {
       const cardCount = 6 - player.cards.length > 0 ? 6 - player.cards.length : 0
       for (let index = 0; index < cardCount; index++) {
@@ -104,6 +105,10 @@ module.exports = function () {
       }
     });
   };
+
+  // const deal = (): void => {
+  //   dealCards(gameState.drawPile, gameState.players);
+  // };
 
   const highestCard = (cardA: Card, cardB: Card): Card => {
     if (cardA.suit === cardB.suit) {
@@ -124,5 +129,7 @@ module.exports = function () {
     startGame,
     nextRound,
     pickUp,
+    // deal,
+    dealCards,
   };
 };

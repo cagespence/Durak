@@ -10,7 +10,6 @@ function importAll(r) {
   return images;
 }
 
-
 function App(props) {
   const [images, setImages] = useState([])
   
@@ -33,7 +32,6 @@ function App(props) {
       }
       {!props.user &&
         <>
-         
           <RegisterForm />
           {/* <div className="label">
             This game has no winner - only a loser. At the start, each player is dealt six cards, which are played in a series of bouts of attack and defence. When a player's hand is reduced to fewer than six cards it is replenished from the talon of undealt cards. After the talon is exhausted, there is no more replenishment and the aim is to get rid of all the cards from your hand. The last player left holding cards is the loser. This player is the fool (durak) and is ridiculed by the other players.

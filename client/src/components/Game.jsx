@@ -8,6 +8,7 @@ import {
   CSSTransition,
   TransitionGroup,
 } from 'react-transition-group';
+import NewGameBoard from './NewGameBoard'
 
 function useWindowSize() {
   const isClient = typeof window === 'object';
@@ -62,7 +63,6 @@ export const Game = (props) => {
 
   const fadeInTime = 250
   
-
   const setupHand = () => {
     const playerIndex = getPlayerIndex()
 
@@ -207,15 +207,11 @@ export const Game = (props) => {
     
   }, [cardsWidth, playerCards])
 
-  
-
   const getPlayerIndex = () => {
     return props.gameState?.players?.findIndex((player) => {
       return player.player.clientId === props.user.clientId
     })
   }
-
-  
 
   /**
    * Helper function to join arrays with commas, and 'or' at the end
@@ -535,7 +531,7 @@ export const Game = (props) => {
       }
       {props.gameState &&
         <>
-        {message && (<div className="message">
+        {/* {message && (<div className="message">
           {message}
         </div>)}
         <div className="container">
@@ -559,7 +555,8 @@ export const Game = (props) => {
               )}
             </Droppable>
           </DragDropContext>
-        </div>
+        </div> */}
+        <NewGameBoard></NewGameBoard>
         </>
       }
     </>

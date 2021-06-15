@@ -74,6 +74,11 @@ export default function () {
     socket.emit('start-game', roomId, callback)
   }
 
+  function deal(roomId, callback) {
+    console.log('deal from socket')
+    socket.emit('deal', roomId, callback)
+  }
+
   return {
     register,
     createRoom,
@@ -84,6 +89,7 @@ export default function () {
     attack,
     defend,
     nextRound,
-    pickUp
+    pickUp,
+    deal
   }
 }

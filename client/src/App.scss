@@ -66,11 +66,11 @@ body {
   flex-direction: column;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
+// .container {
+//   display: flex;
+//   flex-direction: column;
+//   flex: 1;
+// }
 
 button, input {
   font-family : inherit;
@@ -112,34 +112,27 @@ button.scores {
   }
 }
 
-.hand {
-  /* background-color: aquamarine; */
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  counter-reset: cardCounter;
-}
-
-.card {
-  margin-bottom: 1em;
-}
-
-.zone {
-  // box-sizing: border-box;
-  border-radius: .5em;
-  border: .3em dashed var(--color-dark);
-  // animation: example 1s ease-in 0s;
-  width: var(--card-width);
-  height: calc(var(--card-width) * 1.5);
-  // transition: all 500ms;
-  margin-right: 20px;
-}
-
-// .center-vertical {
-//   height: 70%;
+// .hand {
+//   /* background-color: aquamarine; */
+//   height: auto;
 //   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
+//   flex-direction: row;
+//   counter-reset: cardCounter;
+// }
+
+// .card {
+//   margin-bottom: 1em;
+// }
+
+// .zone {
+//   // box-sizing: border-box;
+//   border-radius: .5em;
+//   border: .3em dashed var(--color-dark);
+//   // animation: example 1s ease-in 0s;
+//   width: var(--card-width);
+//   height: calc(var(--card-width) * 1.5);
+//   // transition: all 500ms;
+//   margin-right: 20px;
 // }
 
  /* The animation code */
@@ -154,56 +147,51 @@ button.scores {
   }
 }
 
-.card img {
-  width: var(--card-width);
-  height: calc(var(--card-width) * 1.5);
-  box-sizing: content-box;
-  margin-right: 20px;
-  border: 5px solid ;
-  border-radius: 15px;
-  transition: all 250ms;
-  &.placeholder {
-    border: 5px solid #00000c91;
-  }
-}
+// .card img {
+//   width: var(--card-width);
+//   height: calc(var(--card-width) * 1.5);
+//   box-sizing: content-box;
+//   margin-right: 20px;
+//   border: 5px solid ;
+//   border-radius: 15px;
+//   transition: all 250ms;
+//   &.placeholder {
+//     border: 5px solid #00000c91;
+//   }
+// }
  
-.card div {
-  width: var(--card-width);
-  height: calc(var(--card-width) * 1.5);
-  box-sizing: content-box;
-  margin-right: 20px;
-  border: 5px solid #000;
-  border-radius: 15px;
-  transition: all 250ms;
-  background-color: var(--color-secondary);
-  &.placeholder {
-    border: 5px solid #00000c91;
-  }
-}
+// .card div {
+//   width: var(--card-width);
+//   height: calc(var(--card-width) * 1.5);
+//   box-sizing: content-box;
+//   margin-right: 20px;
+//   border: 5px solid #000;
+//   border-radius: 15px;
+//   transition: all 250ms;
+//   background-color: var(--color-secondary);
+//   &.placeholder {
+//     border: 5px solid #00000c91;
+//   }
+// }
 
-@media (max-width:780px) {
-  div[data-rbd-droppable-id = "hand"] {
-    margin-left: 0 !important;
-    // padding-left: 20px;
-    margin-right: 0 !important ;
-    width:100% !important ;
-  }
-}
+// @media (max-width:780px) {
+//   div[data-rbd-droppable-id = "hand"] {
+//     margin-left: 0 !important;
+//     // padding-left: 20px;
+//     margin-right: 0 !important ;
+//     width:100% !important ;
+//   }
+// }
 
 
 
-div[data-rbd-droppable-id = "hand"] {
-  overflow-x: auto;
-  // padding-left: 1em;
-  // padding-right: 5vw;
-  scrollbar-width: none;
-  margin-left: auto;
-  margin-right: auto;
-  transition: margin 500ms;
-  // &:nth-child(n){
-  //   width: calc(n * var(--card-width))
-  // }
-}
+// div[data-rbd-droppable-id = "hand"] {
+//   overflow-x: auto;
+//   scrollbar-width: none;
+//   margin-left: auto;
+//   margin-right: auto;
+//   transition: margin 500ms;
+// }
 
 // div[data-rbd-droppable-id = "play-zone"] {
 //   /* overflow-x: auto; */
@@ -251,7 +239,7 @@ div[data-rbd-droppable-id = "hand"] {
   /* align-items: center; */
 }
 
-.played-cards :nth-child(2n) {
+.played-cards :nth-child(2n)  {
   /* margin-left: calc(var(--card-width) / -1);   */
   // margin-left: calc(var(--card-width) * -1);
   // padding-left: 0;

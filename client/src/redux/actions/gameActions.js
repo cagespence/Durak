@@ -6,6 +6,7 @@ const client = getClient();
 
 export const gameActions = {
   startGame,
+  deal,
   attack,
   defend,
   pickUp,
@@ -105,4 +106,23 @@ function updateGameState (gameState) {
     dispatch(update(gameState))
   }
   function update(gameState)  { return {type: gameConstants.UPDATE_GAMESTATE, gameState}}
+}
+
+function deal(roomId) {
+  return dispatch => {
+    dispatch(request(roomId))
+    client.deal(roomId, (error, gameState) => {
+      if (error) {
+        dispatch(failure(error))
+        console.log('fail deal')
+      }
+      if (gameState) {
+        dispatch(success(gameState))
+        console.log('success deal')
+      }
+    })
+    function request(roomId) {return {type: gameConstants.DEAL_REQUEST, roomId}}
+    function success(gameState) {return {type: gameConstants.DEAL_SUCCESS, gameState}}
+    function failure(error) {return {type: gameConstants.DEAL_FAILURE, error}}
+  }
 }
